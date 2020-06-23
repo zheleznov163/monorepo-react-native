@@ -1,0 +1,9 @@
+node_modules
+.vscode
+.expo
+.idea
+/packages/mobile_react_native/ios/build/mobile/
+/packages/mobile_react_native/ios/Podfile.lock
+/packages/mobile_react_native/ios/Pods/
+/packages/mobile_react_native/android/build
+/packages/mobile_react_native/android/app/build/intermediates
