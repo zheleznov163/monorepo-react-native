@@ -8,5 +8,12 @@
     "packages": [
       "packages/*"
     ]
+  },
+  "scripts": {
+    "start:web": "yarn workspace @monorepo/web-react start",
+    "start:mobile": "yarn workspace @monorepo/mobile start",
+    "mobile:reset": "yarn workspace @monorepo/mobile reset",
+    "android": "yarn workspace mobile android",
+    "ios": "yarn workspace @monorepo/mobile ios"
   }
 }

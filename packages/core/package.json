@@ -1,5 +1,5 @@
 {
-  "name": "amplify-app",
+  "name": "@monorepo/core",
   "version": "1.0.0",
   "description": "amplify app skeleton",
   "main": "index.js",
