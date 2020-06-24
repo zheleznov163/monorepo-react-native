@@ -95,14 +95,34 @@ export default class Model<T extends ModelData> {
    */
   static mock: ModelData[] = [];
 
+  /**
+   * Синхронизирует объект с базой
+   *
+   * @param {any[]} template
+   * @returns {Promise<this>}
+   * @memberof Model
+   */
   async get(template: any[]): Promise<this> {
     return this;
   }
 
-  update(data: T): this {
+  /**
+   * Обновляет собственные параметры базового интерфейса
+   *
+   * @param {Partial<T>} data
+   * @returns {this}
+   * @memberof Model
+   */
+  update(data: Partial<T>): this {
     return this;
   }
 
+  /**
+   * Клонирует весь объект
+   *
+   * @returns {this}
+   * @memberof Model
+   */
   clone(): this {
     return this.constructor(this);
   }
