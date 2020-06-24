@@ -1,4 +1,4 @@
-import { ModelData, ModelsKeys, IUser, IModel } from './types';
+import { ModelData, ModelsKeys } from './types';
 
 type PrimaryKey = ModelsKeys[];
 
@@ -103,7 +103,7 @@ export default abstract class Model<T extends ModelData> {
     return this;
   }
 
-  clone(): Model<T> {
+  clone(): this {
     return this.constructor(this);
   }
 }
