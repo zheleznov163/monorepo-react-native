@@ -11,7 +11,7 @@ type PrimaryKey = ModelsKeys[];
  * @implements {IModel<T>}
  * @template T
  */
-export default abstract class Model<T extends ModelData> {
+export default class Model<T extends ModelData> {
   constructor(model: Partial<T>) {}
 
   /**
@@ -19,7 +19,7 @@ export default abstract class Model<T extends ModelData> {
    * @param data
    */
   static async create<T extends ModelData>(data: Partial<T>) {
-    return data;
+    return new this(data);
   }
 
   /**
