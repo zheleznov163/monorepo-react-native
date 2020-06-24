@@ -19,7 +19,7 @@ export default class Model<T extends ModelData> {
    * @param data
    */
   static async create<T extends ModelData>(data: Partial<T>) {
-    return new this(data);
+    return data;
   }
 
   /**
