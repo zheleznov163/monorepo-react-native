@@ -4,7 +4,10 @@
   "description": "amplify app skeleton",
   "main": "index.js",
   "dependencies": {
-    "@aws-amplify/datastore": "^2.2.4"
+    "@aws-amplify/datastore": "^2.2.4",
+    "aws-amplify": "^3.0.18",
+    "graphql-tag": "^2.10.3",
+    "graphql-tag-ts": "^0.1.15"
   },
   "devDependencies": {},
   "scripts": {

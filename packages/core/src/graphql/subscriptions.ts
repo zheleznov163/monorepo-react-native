@@ -131,3 +131,33 @@ export const onDeleteUser = /* GraphQL */ `
     }
   }
 `;
+export const onCreatePost = /* GraphQL */ `
+  subscription OnCreatePost {
+    onCreatePost {
+      id
+      authorID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdatePost = /* GraphQL */ `
+  subscription OnUpdatePost {
+    onUpdatePost {
+      id
+      authorID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeletePost = /* GraphQL */ `
+  subscription OnDeletePost {
+    onDeletePost {
+      id
+      authorID
+      createdAt
+      updatedAt
+    }
+  }
+`;

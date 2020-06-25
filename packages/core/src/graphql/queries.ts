@@ -89,3 +89,24 @@ export const listUsers = /* GraphQL */ `
     }
   }
 `;
+export const getPost = /* GraphQL */ `
+  query GetPost($id: ID!) {
+    getPost(id: $id) {
+      id
+      authorID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listPosts = /* GraphQL */ `
+  query ListPosts(
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPosts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      nextToken
+    }
+  }
+`;

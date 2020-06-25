@@ -25,4 +25,11 @@ type User @model {
   id: ID!
   connectID: ID!
   connect: Connect! @connection(fields: ["connectID"])
+  posts: [Post] @connection(keyName: "byUser", fields: ["id"])
+}
+
+type Post @model @key(name: "byUser", fields: ["authorID"]) {
+  id: ID!
+  authorID: ID!
+  author: User @connection(fields: ["authorID"])
 }
