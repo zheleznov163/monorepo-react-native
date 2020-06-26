@@ -1,17 +1,18 @@
-import { ModelData, ModelsKeys } from './types';
+import { ModelData, ModelsKeys } from '../types';
 
 type PrimaryKey = ModelsKeys[];
 
 /**
  * Общий класс для всех моделей данных
  */
-export default abstract class Model<T extends ModelData> {
+export default abstract class Model<T> {
+  static readonly dbName: string;
   constructor(model: Partial<T>) {}
 
   /**
    * Создает новую записть в таблице, возвращает новые значения из базы
    */
-  static async create<T extends ModelData>(data: Partial<T>) {
+  static async create<T>(data: Partial<T>) {
     return data;
   }
 
@@ -19,7 +20,7 @@ export default abstract class Model<T extends ModelData> {
    * обновляет данные в БД
    */
 
-  static async update(data: ModelData, template) {
+  static async update<T>(data: Partial<T>, fragment: any[]) {
     const updatedData = data;
     console.log({ error: 'Не обновлен, нет реализации' });
     return updatedData;
@@ -30,50 +31,40 @@ export default abstract class Model<T extends ModelData> {
    *
    * @param input
    */
-  static async list(input: { nextToken: string; template: any[] }) {
+  static async list(input: { nextToken: string; fragment: any[] }) {
     return this.mock;
   }
 
   /**
    * Удаление записи из БД
    */
-  static async delete(model: Model<ModelData>) {
+  static async delete<T>(model: Model<T>) {
     console.log({ error: 'Не удален, нет реализации' });
     return model;
   }
 
   /**
-   * Ключ раздела и ключи сортировки в DynamoDB в порядке
-   */
-  protected static readonly primaryKey: PrimaryKey = ['id'];
-
-  /**
    * Возвращает данные от БД на основе ключа
    * В отсуствии реализации возвращает данные из Model.mock
    */
-  static async get<T extends ModelData>(keys: Partial<T>, fragment: any[]): Promise<Partial<T>> {
-    return this.mock.find((model) => this.primaryKey.every((key) => model[key] === keys[key])) as T;
+  static async get<T>(keys: Partial<T>, fragment: any[]): Promise<any> {
+    return this.mock.find(model => {
+      for (const [key, value] of Object.entries(keys)) {
+        if (model[key] !== value) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
-
   /**
    * Мок данных, необходимый при разработке.
    * Cтатические методы класса в отсутствии реализации вовзащают
    * данные из mock.
    */
-  static mock: ModelData[] = [];
+  static mock: any[] = [];
 
-  protected __keys: Partial<T>;
-
-  /**
-   * Синхронизирует объект с базой
-   */
-  async get(fragment: any[]): Promise<this> {
-    if (this.__keys) {
-      return this.update(await this.constructor.get(this.__keys));
-    } else {
-      return;
-    }
-  }
+  abstract get __keys(): Partial<T>;
 
   /**
    * Обновляет собственные параметры базового интерфейса

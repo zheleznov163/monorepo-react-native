@@ -1,28 +1,13 @@
-import Model from './Model';
-import { IUser as Base, ModelData } from './types';
+import Model from '../Model';
+import { IUser as Base, ModelData } from '../types';
 
-import Connect from './Connect';
-import { GetUserQueryVariables } from '../API';
-
-import { API, graphqlOperation } from 'aws-amplify';
-import { GraphQLResult, GRAPHQL_AUTH_MODE } from '@aws-amplify/api/lib-esm/types';
-
-type AWSRequest = {
-  authMode: GRAPHQL_AUTH_MODE;
-  keys: any;
-  template: string;
-};
-class Server {
-  template(fragment: TemplateStringsArray, ...args: any[]): string {
-    return '';
-  }
-
-  query({ authMode, keys, template }: AWSRequest) {
-    API.graphql(graphqlOperation());
-  }
-}
+import Connect from '../Connect';
+import { GetUserQueryVariables } from '../../API';
+import { Server } from '../../classes';
 
 export default class User extends Model<Base> implements Partial<Base> {
+  static readonly dbName = 'User';
+
   id: string;
   connectID: string;
   connect: Connect;
@@ -41,10 +26,14 @@ export default class User extends Model<Base> implements Partial<Base> {
     return this;
   }
 
+  get __keys() {
+    return { id: this.id };
+  }
+
   static async get(keys: GetUserQueryVariables, fragment: any[]): Promise<Partial<Base>> {
     const server = new Server();
 
-    const temaplate = server.template/* GraphQL */ `
+    const template = server.template/* GraphQL */ `
       query GetUser($id: ID!) {
         getUser(id: $id) {
           ${fragment}
@@ -52,7 +41,7 @@ export default class User extends Model<Base> implements Partial<Base> {
       }
     `;
 
-    const data = server.query({ temaplate, keys });
+    const { data } = await server.query<{ getUser: Base }>({ template, params: keys });
 
     return data.getUser;
   }

@@ -1,7 +1,7 @@
-import Model from './Model';
-import { IConnect as Base } from './types';
+import Model from '../Model';
+import { IConnect as Base } from '../types';
 
-import { Sex } from '../API';
+import { Sex } from '../../API';
 
 export default class Connect extends Model<Base> implements Partial<Base> {
   id?: string;
