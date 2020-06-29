@@ -1,3 +1,9 @@
+/**
+ * GetNames тип для извлечения набора ключей
+ * @template FromType тип - источник ключей
+ * @template KeepType критерий фильтрации
+ * @template Include  признак для указания как интерпретировать критерий фильтрации. В случае false - инвертировать результат для KeepType
+ */
 export type GetNames<FromType, KeepType = any, Include = true> = {
   [K in keyof FromType]: FromType[K] extends KeepType
     ? Include extends true
