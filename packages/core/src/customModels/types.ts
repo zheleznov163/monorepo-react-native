@@ -38,7 +38,7 @@ export type ModelsKeys = keyof IConnect | keyof IAdmin | keyof IFsbAgent | keyof
 /**
  * Интерфейс экземпляров моделей данных
  */
-export interface IModel<T extends ModelData> {
+export interface IModel<T> {
   /**  Синхронизирует соббственные данные с БД, на основе переданного шаблон */
   get(template: any[]): Promise<this>;
 
@@ -46,10 +46,17 @@ export interface IModel<T extends ModelData> {
   update(data: ModelData): this;
 
   /**  Клонирует объект и все вложенные свойства */
-  clone(): Promise<Partial<Model<T>>>;
+  clone(): Promise<T>;
 }
 
-export interface IListItems<T extends ModelData> {
+export interface IListItems<T> {
   items: Partial<T>[];
   nextToken?: string;
+}
+
+export enum ModelName {
+  User = 'User',
+  Connect = 'Connect',
+  FsbAgent = 'FsbAgent',
+  Admin = 'Admin'
 }

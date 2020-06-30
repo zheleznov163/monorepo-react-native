@@ -1,23 +1,13 @@
-import { ModelData, Model } from '../../customModels';
+import { ModelData, Model, User, IUser, IListItems } from '../../customModels';
+import { GetNames } from '../../types';
+import { Fragment } from './template.types';
 
-export default class TemplateItem<T extends ModelData> {
-  model: Model<T>;
-
-  constructor(model: Model<T>) {
-    this.model = model;
+export default class Template<T> {
+  get(strs: TemplateStringsArray, fragment: Fragment<T>): string {
+    return `${strs[0]}\t${strs[1]}`;
   }
-}
 
-class TemplateList<T extends ModelData> {
-  constructor() {}
-}
-
-class TemplateParamt<T extends ModelData> {
-  items: TemplateItem<T>;
-  limit?: number;
-  nextToken?: string;
-  filter?: FilterAWS<T> | string;
-  sort?: SortFilterAWS<T>;
-  get?: FilterAWS<T>;
-  constructor() {}
+  list(strs: TemplateStringsArray, fragment: Fragment<T>): string {
+    return `${strs[0]}\t${strs[1]}`;
+  }
 }

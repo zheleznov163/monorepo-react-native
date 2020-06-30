@@ -34,11 +34,4 @@ describe('Test: Abstract model', () => {
     expect(Model.update).toBeDefined();
     expect(Model.delete).toBeDefined();
   });
-
-  test('Model instance, method "get"', async () => {
-    // ModelChildren.mock = [{ id: '123', name: 'Nikita' }];
-    const result = await ModelChildren.get({ id: '123' }, []);
-    console.log({ result });
-    expect(result).toBeUndefined();
-  });
 });

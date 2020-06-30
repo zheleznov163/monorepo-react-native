@@ -1,19 +1,33 @@
-import { ModelData, ModelsKeys } from '../types';
+import { GraphQLResult, GRAPHQL_AUTH_MODE } from '@aws-amplify/api/lib-esm/types';
+import { Fragment, FilterAWS, ListVariables } from '../../classes/template/template.types';
+import { IListItems } from '../types';
 
-type PrimaryKey = ModelsKeys[];
+type AWSResult<T> = {
+  [K: string]: T | IListItems<T>;
+};
+
+export type ModelMeta<T> = {
+  readonly table: string;
+  readonly keys: (keyof T)[];
+};
 
 /**
  * Общий класс для всех моделей данных
  */
 export default abstract class Model<T> {
-  static readonly dbName: string;
+  static readonly meta: ModelMeta<any>;
+
   constructor(model: Partial<T>) {}
 
   /**
    * Создает новую записть в таблице, возвращает новые значения из базы
    */
-  static async create<T>(data: Partial<T>) {
-    return data;
+  static async create<T, R extends AWSResult<T>>(
+    variables: Partial<T>,
+    fragment: Fragment<T>,
+    authMode?: GRAPHQL_AUTH_MODE
+  ): Promise<GraphQLResult<R>> {
+    return {};
   }
 
   /**
@@ -28,43 +42,50 @@ export default abstract class Model<T> {
 
   /**
    * Получение массива моделей из БД
-   *
-   * @param input
    */
-  static async list(input: { nextToken: string; fragment: any[] }) {
-    return this.mock;
+  static async list<T, R extends AWSResult<T>>(
+    variables: ListVariables<T>,
+    fragment: Fragment<T>,
+    authMode?: GRAPHQL_AUTH_MODE
+  ): Promise<GraphQLResult<R>> {
+    return {};
   }
 
   /**
    * Удаление записи из БД
    */
-  static async delete<T>(model: Model<T>) {
+  static async delete<T, R extends AWSResult<T>>(
+    variables: Partial<T>,
+    fragment: Fragment<T>,
+    authMode?: GRAPHQL_AUTH_MODE
+  ): Promise<GraphQLResult<R>> {
     console.log({ error: 'Не удален, нет реализации' });
-    return model;
+    return {} as T;
   }
 
   /**
-   * Возвращает данные от БД на основе ключа
-   * В отсуствии реализации возвращает данные из Model.mock
+   * Возвращает данные от БД на основе ключ
    */
-  static async get<T>(keys: Partial<T>, fragment: any[]): Promise<any> {
-    return this.mock.find(model => {
-      for (const [key, value] of Object.entries(keys)) {
-        if (model[key] !== value) {
-          return false;
-        }
-      }
-      return true;
-    });
+  static async get<T, R extends AWSResult<T>>(
+    variables: Partial<T>,
+    fragment: Fragment<T>,
+    authMode?: GRAPHQL_AUTH_MODE
+  ): Promise<GraphQLResult<R>> {
+    return {};
   }
   /**
    * Мок данных, необходимый при разработке.
    * Cтатические методы класса в отсутствии реализации вовзащают
    * данные из mock.
    */
-  static mock: any[] = [];
 
-  abstract get __keys(): Partial<T>;
+  get __keys(): Partial<T> {
+    return {};
+  }
+
+  get __data(): Partial<T> {
+    return {};
+  }
 
   /**
    * Обновляет собственные параметры базового интерфейса
@@ -73,10 +94,8 @@ export default abstract class Model<T> {
     return this;
   }
 
-  /**
-   * Клонирует весь объект
-   */
-  clone(): this {
-    return this.constructor(this);
-  }
+  // /**
+  //  * Клонирует весь объект
+  //  */
+  // abstract clone(): {};
 }

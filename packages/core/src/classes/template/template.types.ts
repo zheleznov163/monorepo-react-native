@@ -1,4 +1,4 @@
-import { ModelData, IUser } from '../../customModels/types';
+import { ModelData, IUser, IListItems } from '../../customModels/types';
 import { GetNames } from '../../types';
 
 type FilterString<T> = {
@@ -45,57 +45,67 @@ type FilterBoolean<T> = {
   eq?: T;
 };
 
-type FilterBase<T extends ModelData> = {
+type FilterBase<T> = {
   and?: FilterAWS<T>[];
   or?: FilterAWS<T>[];
   not?: FilterAWS<T>;
 };
 
-export type FilterAWS<T extends ModelData> = {
+export type FilterAWS<T> = {
   [K in GetNames<T, string | number | string[] | number[] | boolean>]?: T[K] extends string
     ? FilterString<T[K]>
     : T[K] extends number
     ? FilterIntenger<T[K]>
     : T[K] extends boolean
     ? FilterBoolean<T[K]>
-    : never
+    : never;
 } &
   FilterBase<T>;
+
+export type ListVariables<T> = {
+  filter?: FilterAWS<T> | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
 
 type SortFilterAWS<T> = {
   field?: GetNames<T, string | number | string[] | number[] | boolean>;
   direction: 'ASC' | 'DESC';
 };
 
-type TemplateDescription<T extends ModelData> = GetNames<
-  Required<T>,
-  string | number | string[] | boolean
->;
+/**
+ *  Ключи объекта имеющие скалярные значения и или массив скалярных значений
+ */
+type ScalarTypeKey<T> = GetNames<T, string | number | string[] | boolean>;
+/**
+ *  Ключи объектных типов
+ */
+type CompositeTypeKey<T> = GetNames<T, string | number | string[] | boolean, false>;
 
-export class TemplateClass<T extends ModelData> {
-  items: TemplateArray<T>;
+/**
+ *  Описания списка сущностей в запросе один ко многим
+ */
+type ConnectionDescribe<T> = {
+  items: Fragment<T>;
   limit?: number;
   nextToken?: string;
-  filter?: FilterAWS<T> | string;
+  filter?: FilterAWS<T> | string; // костыль для enums
   sort?: SortFilterAWS<T>;
   get?: FilterAWS<T>;
-}
-
-export interface TemplateArray<T extends ModelData>
-  extends Array<TemplateDescription<T> | TemplateObject<T>> {}
-
-export type TemplateObject<T extends ModelData> = {
-  [K in GetNames<
-    Required<T>,
-    string | number | boolean | string[],
-    false
-  >]?: T[K] extends AWSListItems<infer U>
-    ? U extends ModelData
-      ? TemplateClass<U>
-      : never
-    : T[K] extends Partial<infer R>
-    ? R extends ModelData
-      ? TemplateArray<R>
-      : never
-    : never
 };
+
+/**
+ * Сложный тип данных
+ */
+type Composite<T> = {
+  [K in CompositeTypeKey<T>]?: T[K] extends IListItems<infer U>
+    ? ConnectionDescribe<U>
+    : T[K] extends object
+    ? Fragment<Required<T[K]>>
+    : never;
+};
+
+/**
+ *  Массив ключей, которые будут включены в запрос AWS
+ */
+export type Fragment<T> = Array<ScalarTypeKey<T> | Composite<T>>;

@@ -1,30 +1,50 @@
 import { API, graphqlOperation } from 'aws-amplify';
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from '@aws-amplify/api/lib-esm/types';
 import Observable from 'zen-observable-ts';
-import { ModelData } from '../../customModels';
+import { IListItems } from '../../customModels';
+import { GetNames } from '../../types';
+import { ModelStringInput } from '../../API';
+import { FilterAWS } from '../template/template.types';
 
-type AWSRequest = {
-  authMode?: GRAPHQL_AUTH_MODE;
-  params: any;
-  template: string;
+type ConditionInput<T> = {
+  and?: Array<ConditionInput<T> | null> | null;
+  or?: Array<ConditionInput<T> | null> | null;
+  not?: ConditionInput<T> | null;
+} & {
+  [K in GetNames<T, string | number | string[] | number[] | boolean>]?: T[K] extends string
+    ? ModelStringInput
+    : never;
 };
 
-interface AWSResponse<T extends ModelData> {
-  [Name: string]: T;
+type MutationVariables<T> = {
+  input: Partial<T>;
+  condition?: ConditionInput<T> | null;
+};
+
+type QueryVariables<T> = {
+  filter?: FilterAWS<T> | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
+
+type AWSRequest<T> = {
+  authMode?: GRAPHQL_AUTH_MODE;
+  query: string;
+  variables?: Partial<T> | MutationVariables<T> | QueryVariables<T>;
+};
+
+interface AWSResponse<T> {
+  [Name: string]: T | IListItems<T>;
 }
 
-export default class Server {
-  template(fragment: TemplateStringsArray, ...args: any[]): string {
-    return '';
-  }
-
-  async query<T extends AWSResponse<ModelData>>({ authMode, params, template }: AWSRequest) {
-    return API.graphql({ ...graphqlOperation(template, params), authMode }) as Promise<
-      GraphQLResult<T>
+export default class Server<T> {
+  async query<R extends AWSResponse<T>>({ authMode, query, variables }: AWSRequest<T>) {
+    return API.graphql({ ...graphqlOperation(query, variables), authMode }) as Promise<
+      GraphQLResult<R>
     >;
   }
 
-  async subscribe<T extends AWSResponse<ModelData>>({ authMode, params, template }: AWSRequest) {
-    return API.graphql({ ...graphqlOperation(template, params), authMode }) as Observable<T>;
+  async subscribe<R extends AWSResponse<T>>({ authMode, query, variables }: AWSRequest<T>) {
+    return API.graphql({ ...graphqlOperation(query, variables), authMode }) as Observable<R>;
   }
 }
