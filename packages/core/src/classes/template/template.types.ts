@@ -76,16 +76,17 @@ type SortFilterAWS<T> = {
 /**
  *  Ключи объекта имеющие скалярные значения и или массив скалярных значений
  */
-type ScalarTypeKey<T> = GetNames<T, string | number | string[] | boolean>;
+export type ScalarTypeKey<T> = GetNames<T, string | number | string[] | boolean>;
+
 /**
  *  Ключи объектных типов
  */
-type CompositeTypeKey<T> = GetNames<T, string | number | string[] | boolean, false>;
+export type CompositeTypeKey<T> = GetNames<T, string | number | string[] | boolean, false>;
 
 /**
- *  Описания списка сущностей в запросе один ко многим
+ * Описания списка сущностей в запросе один ко многим
  */
-type ConnectionDescribe<T> = {
+export type ConnectionDescribe<T> = {
   items: Fragment<T>;
   limit?: number;
   nextToken?: string;
@@ -97,7 +98,7 @@ type ConnectionDescribe<T> = {
 /**
  * Сложный тип данных
  */
-type Composite<T> = {
+export type Composite<T> = {
   [K in CompositeTypeKey<T>]?: T[K] extends IListItems<infer U>
     ? ConnectionDescribe<U>
     : T[K] extends object

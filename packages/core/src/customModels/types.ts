@@ -30,6 +30,8 @@ export interface IUser {
   id: Scalar['ID'];
   connectID: Scalar['ID'];
   connect: Partial<IConnect>;
+
+  listConnectTest: IListItems<IConnect>;
 }
 
 export type ModelData = IConnect | IAdmin | IFsbAgent | IUser;
